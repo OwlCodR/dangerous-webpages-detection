@@ -2,10 +2,20 @@ import csv
 import codecs
 import string
 
+# This file genereates a .csv file of most popular words in dataset
+# First column - Word
+# Second column - Number of occurrence
+
 dictionary = {}
 
-with codecs.open("dataset/big_dataset_lemma.csv", encoding='utf-8') as csv_file_dataset:
-    file_reader = csv.reader(csv_file_dataset, delimiter = " ")
+dataset_path = "dataset/big_dataset.xlsx"
+dataset_delimiter = '\t'
+
+output_path = "dataset/key_words2.csv"
+output_delimiter = '\t'
+
+with codecs.open(dataset_path, encoding='utf-8') as csv_file_dataset:
+    file_reader = csv.reader(csv_file_dataset, delimiter = dataset_delimiter)
     count = 1
     for row in file_reader:
         if row[1] == '1.0':
@@ -15,9 +25,10 @@ with codecs.open("dataset/big_dataset_lemma.csv", encoding='utf-8') as csv_file_
                 else:
                     dictionary[word] += 1
             count += 1
+
 dictionary = {k: v for k, v in sorted(dictionary.items(), key=lambda item: item[1], reverse=True)}
 
-with codecs.open("dataset/big_dataset_lemma_key_words.csv", mode="w", encoding='utf-8') as csv_file_key_words:
-    file_writer = csv.writer(csv_file_key_words, delimiter = "\t")
+with codecs.open(output_path, mode="w", encoding='utf-8') as csv_file_key_words:
+    file_writer = csv.writer(csv_file_key_words, delimiter = output_delimiter)
     for i in dictionary:
         file_writer.writerow([i, dictionary[i]])
