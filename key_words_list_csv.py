@@ -2,33 +2,38 @@ import csv
 import codecs
 import string
 
-# This file genereates a .csv file of most popular words in dataset
+# This file generates a .csv file of most popular words in dataset
 # First column - Word
 # Second column - Number of occurrence
 
-dictionary = {}
+def generate_csv(dataset_path, dataset_delimiter, output_path, output_delimiter):
+    dictionary = {}
 
-dataset_path = "dataset/big_dataset.xlsx"
-dataset_delimiter = '\t'
+    with codecs.open(dataset_path, encoding='utf-8') as csv_file_dataset:
+        file_reader = csv.reader(csv_file_dataset, delimiter = dataset_delimiter)
+        count = 1
+        for row in file_reader:
+            if row[1] == '1.0':
+                for word in row[0].rstrip(string.punctuation).split():
+                    if dictionary.get(word) == None:
+                        dictionary[word] = 1
+                    else:
+                        dictionary[word] += 1
+                count += 1
 
-output_path = "dataset/key_words2.csv"
-output_delimiter = '\t'
+    dictionary = {k: v for k, v in sorted(dictionary.items(), key=lambda item: item[1], reverse=True)}
 
-with codecs.open(dataset_path, encoding='utf-8') as csv_file_dataset:
-    file_reader = csv.reader(csv_file_dataset, delimiter = dataset_delimiter)
-    count = 1
-    for row in file_reader:
-        if row[1] == '1.0':
-            for word in row[0].rstrip(string.punctuation).split():
-                if dictionary.get(word) == None:
-                    dictionary[word] = 1
-                else:
-                    dictionary[word] += 1
-            count += 1
+    with codecs.open(output_path, mode="w", encoding='utf-8') as csv_file_key_words:
+        file_writer = csv.writer(csv_file_key_words, delimiter = output_delimiter)
+        for i in dictionary:
+            file_writer.writerow([i, dictionary[i]])
 
-dictionary = {k: v for k, v in sorted(dictionary.items(), key=lambda item: item[1], reverse=True)}
+if __name__ == "__main__":
 
-with codecs.open(output_path, mode="w", encoding='utf-8') as csv_file_key_words:
-    file_writer = csv.writer(csv_file_key_words, delimiter = output_delimiter)
-    for i in dictionary:
-        file_writer.writerow([i, dictionary[i]])
+    dataset_path = "dataset/big_dataset.xlsx"
+    dataset_delimiter = '\t'
+
+    output_path = "dataset/key_words2.csv"
+    output_delimiter = '\t'
+
+    generate_csv(dataset_path, dataset_delimiter, output_path, output_delimiter)
