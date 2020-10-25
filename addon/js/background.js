@@ -13,21 +13,17 @@ function getText(tabId) {
         if (response.method == "getText") {
             console.log(response.data);
             localStorage.setItem('page', response.data);
-            getCount('Python')
+            sendTextToServer()
         }
     });
 }
 
-function getCount(word) {
+function sendTextToServer() {
     $.ajax({
         type: "POST",
-        url: "python/get_count.py",
+        url: "http://127.0.0.1:8080/",
         data: { 
-            param1: localStorage['page'],
-            param2: word
-        },
-        success: function (response) {
-            console.log(response);
+            text: localStorage.getItem(['page'])
         }
     }).done(function(data) {
         console.log(data);
