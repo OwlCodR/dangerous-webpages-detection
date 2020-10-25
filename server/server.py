@@ -4,13 +4,39 @@ from pymystem3 import Mystem
 import urllib
 import string
 import re
+import codecs
+import csv
 
 # This file started simple python server
 # And it handles requests from addons
 
+def get_mathces_percent(sentences):
+    match_count = 0.0
+    words_count = 0.0
+    with open("dataset/key_words.csv", encoding='utf-8') as csv_file:
+        file_reader = csv.reader(csv_file, delimiter = '\t')
+        for sentence in sentences:
+            words_count += len(sentence.split())
+            for row in file_reader:
+                if row[0] in sentence:
+                    match_count += 1
+            print(match_count)
+            print(words_count)
+    return match_count / words_count
+    
+
+
 def get_result(sentences):
     print('get_result')
-    pass
+
+    percent = get_mathces_percent(sentences)
+
+    # Machine Learning Here
+
+    if percent > 10:
+        return 'block'
+    else:
+        return 'ok'
 
 def get_removed_punctuation(sentences):
     print('get_removed_punctuation')
