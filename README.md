@@ -1,5 +1,5 @@
 # Suicide Scanner
-
+A simple project that will save the world a little :)
 
 # Files
 Now there are two folders
