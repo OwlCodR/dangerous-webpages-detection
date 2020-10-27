@@ -14,11 +14,19 @@ def generate_csv(dataset_path, dataset_delimiter, output_path, output_delimiter)
         count = 1
         for row in file_reader:
             if row[1] == '1.0':
-                for word in row[0].rstrip(string.punctuation).split():
-                    if dictionary.get(word) == None:
-                        dictionary[word] = 1
+                words = row[0].rstrip(string.punctuation).split()
+                for i in range(len(words)):
+                    #print(words[i])
+                    if 'не' == words[i] or 'ни' == words[i] or 'раз' == words[i]:
+                        continue
+                    if i - 1 > 0:
+                        if 'не' == words[i - 1] or 'ни' == words[i - 1]:
+                            words[i] = words[i - 1] + ' ' + words[i] 
+                            print(words[i])   
+                    if dictionary.get(words[i]) == None:
+                        dictionary[words[i]] = 1
                     else:
-                        dictionary[word] += 1
+                        dictionary[words[i]] += 1
                 count += 1
 
     dictionary = {k: v for k, v in sorted(dictionary.items(), key=lambda item: item[1], reverse=True)}
@@ -30,10 +38,10 @@ def generate_csv(dataset_path, dataset_delimiter, output_path, output_delimiter)
 
 if __name__ == "__main__":
 
-    dataset_path = "dataset/big_dataset.xlsx"
+    dataset_path = "python/server/dataset/small_dataset.csv"
     dataset_delimiter = '\t'
 
-    output_path = "dataset/key_words2.csv"
+    output_path = "python/server/dataset/key_words2.csv"
     output_delimiter = '\t'
 
     generate_csv(dataset_path, dataset_delimiter, output_path, output_delimiter)

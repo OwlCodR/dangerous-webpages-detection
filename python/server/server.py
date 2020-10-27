@@ -23,20 +23,29 @@ def get_mathces_percent(sentences):
             print(match_count)
             print(words_count)
     return match_count / words_count
-    
-
 
 def get_result(sentences):
     print('get_result')
 
-    percent = get_mathces_percent(sentences)
-
+    #percent = get_mathces_percent(sentences)
+    percent = 12
     # Machine Learning Here
 
     if percent > 10:
         return 'block'
     else:
         return 'ok'
+
+def get_sentences(text):
+    print('get_sentences')
+    text = text.decode()
+    text = text.replace('text=', '')
+    text = urllib.parse.unquote_plus(text)
+    text = text.replace('\n', ' ')
+    text = text.replace('\t', ' ')
+    text = text.split('.')
+    text = [x for x in text if len(x) > 3]
+    return text
 
 def get_removed_punctuation(sentences):
     print('get_removed_punctuation')
@@ -70,18 +79,6 @@ def get_lemmatize_sentences(sentences):
         print([sentences[i]])
 
     return sentences
-
-
-def get_sentences(text):
-    print('get_sentences')
-    text = text.decode()
-    text = text.replace('text=', '')
-    text = urllib.parse.unquote_plus(text)
-    text = text.replace('\n', ' ')
-    text = text.replace('\t', ' ')
-    text = text.split('.')
-    text = [x for x in text if len(x) > 3]
-    return text
 
 def get_clear_sentences(text):
 
