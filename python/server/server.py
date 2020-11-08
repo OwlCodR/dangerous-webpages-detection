@@ -1,14 +1,21 @@
 from http.server import BaseHTTPRequestHandler, HTTPServer
 from googletrans import Translator
-from pymystem3 import Mystem
+import pymorphy2
 import urllib
 import string
 import re
 import codecs
 import csv
 
+from MLib import ML
+
 # This file started simple python server
 # And it handles requests from addons
+
+morph = pymorphy2.MorphAnalyzer(lang='ru')
+translator = Translator()
+ml = ML()
+ml.load_all_clf()
 
 def get_mathces_percent(sentences):
     match_count = 0.0
@@ -26,12 +33,14 @@ def get_mathces_percent(sentences):
 
 def get_result(sentences):
     print('get_result')
+    percent = sum(ml.nb.predict(sentences) / len(sentences))
+    print(percent)
 
     #percent = get_mathces_percent(sentences)
-    percent = 12
+    #percent = 12
     # Machine Learning Here
 
-    if percent > 10:
+    if percent > 0.5:
         return 'block'
     else:
         return 'ok'
@@ -44,7 +53,7 @@ def get_sentences(text):
     text = text.replace('\n', ' ')
     text = text.replace('\t', ' ')
     text = text.split('.')
-    text = [x for x in text if len(x) > 3]
+    text = [x for x in text if len(x) > 1]
     return text
 
 def get_removed_punctuation(sentences):
@@ -53,6 +62,7 @@ def get_removed_punctuation(sentences):
     for i in range(len(sentences)):
         sentences[i] = sentences[i].lower()
         sentences[i] = ' '.join(re.findall(r'[А-я]+', sentences[i]))
+        sentences[i] = ' '.join([word for word in sentences[i].split() if morph.parse(word)[0].tag.POS not in ['PREP', 'CONJ', 'PRCL', 'INTJ', 'NUMR'] or word == 'не' or word == 'ни'])
     sentences = [x for x in sentences if len(x) > 1]
     print(sentences)
     return sentences
@@ -60,23 +70,19 @@ def get_removed_punctuation(sentences):
 def get_translated_sentences(sentences):
     print('get_translated_sentences')
 
-    translator = Translator()
-
     for i in range(len(sentences)):
-        sentences[i] = translator.translate(sentences[i], dest='ru').text
-        print(sentences[i])
+        if len(sentences[i]) > 0:
+            sentences[i] = translator.translate(sentences[i], dest='ru').text
+        #print(sentences[i])
 
     return sentences
 
 def get_lemmatize_sentences(sentences):
     print('get_lemmatize_sentences')
 
-    mystem = Mystem()
-
     for i in range(len(sentences)):
-        lemmas = mystem.lemmatize(sentences[i])
-        sentences[i] = ''.join(lemmas).replace('\n', '')
-        print([sentences[i]])
+        sentences[i] = ' '.join([morph.parse(word)[0].normal_form for word in sentences[i].split()])
+        #print([sentences[i]])
 
     return sentences
 
@@ -94,12 +100,12 @@ def get_clear_sentences(text):
     print('get_clear_sentences')
     sentences = get_sentences(text)
     print(sentences)
-    sentences = get_translated_sentences(sentences)
-    print(sentences)
+    #sentences = get_translated_sentences(sentences)
+    #print(sentences)
     sentences = get_removed_punctuation(sentences)
     print(sentences)
-    #sentences = get_lemmatize_sentences(sentences)
-    #print(sentences)
+    sentences = get_lemmatize_sentences(sentences)
+    print(sentences)
     return sentences
 
 class HandleRequests(BaseHTTPRequestHandler):
@@ -117,13 +123,13 @@ class HandleRequests(BaseHTTPRequestHandler):
         content_len = int(self.headers.get('Content-Length'))
         post_body = self.rfile.read(content_len)
         print(self.headers)
-        get_result(get_clear_sentences(post_body))
-        self.wfile.write("ok".encode())
+        self.wfile.write(get_result(get_clear_sentences(post_body)).encode())
 
 def run(server_class=HTTPServer, handler_class=HandleRequests, port=8080):
     server_address = ('localhost', port)
     httpd = server_class(server_address, handler_class)
     print('Starting server...\n')
+
     try:
         httpd.serve_forever()
     except KeyboardInterrupt:
