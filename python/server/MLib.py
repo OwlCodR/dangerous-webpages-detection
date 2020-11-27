@@ -26,6 +26,7 @@ class ML:
         self.dataset_path = 'python/server/dataset/big_dataset4.csv'
         self.test_dataset_path = 'python/server/dataset/small_dataset2.csv'
     
+    
     def make_chart(self, text_clf):
         sns.set(font_scale=1.5)
         sns.set_color_codes("muted")
@@ -41,6 +42,7 @@ class ML:
         plt.ylabel('True Positive Rate')
         plt.title('ROC curve')
         plt.show()
+
 
     def report(self, text_clf, is_make_chart):
         predictions = text_clf.predict(self.test_sentences)
@@ -84,42 +86,53 @@ class ML:
         self.test_sentences = test_data[test_data.columns[0]]
         self.test_labels = test_data[test_data.columns[1]]
 
+
     def learn_clf(self, vectorizer, classifier, is_make_chart):
         text_clf = Pipeline([
                      ('countVec', vectorizer),
                      ('clf', classifier)
                      ])
         print('Start learning...')
-        text_clf.fit(self.sentences, self.labels)
+        text_clf.fit(self.sentences[:10000], self.labels[:10000])
         print('Finish learning...')
         self.report(text_clf, is_make_chart)
         return text_clf
 
+
     def learn(self):
         self.read_datasets()
         self.mix_datasets()
-        self.nb = self.learn_clf(TfidfVectorizer(), BernoulliNB(), True)
-        #self.svc = self.learn_clf(TfidfVectorizer(), SVC(probability=True), True)
-        self.lsvc = self.learn_clf(TfidfVectorizer(), LinearSVC(), False)
-        self.sgd = self.learn_clf(TfidfVectorizer(), SGDClassifier(), False)
+        #self.nb = self.learn_clf(CountVectorizer(), BernoulliNB(), True)
+        self.svc = self.learn_clf(CountVectorizer(), SVC(probability=True), True)
+        #self.lsvc = self.learn_clf(CountVectorizer(), LinearSVC(), False)
+        #self.sgd = self.learn_clf(CountVectorizer(), SGDClassifier(), False)
+
 
     def save_all_clf(self):
         main_path = 'python/server/ml_models/'
-        joblib.dump(self.nb, main_path + 'nb.pkl') 
-        #joblib.dump(self.svc, main_path + 'svc.pkl') 
-        joblib.dump(self.lsvc, main_path + 'lsvc.pkl') 
-        joblib.dump(self.sgd, main_path + 'sgd.pkl') 
+        #joblib.dump(self.nb, main_path + 'nb.pkl') 
+        joblib.dump(self.svc, main_path + 'svc.pkl') 
+        #joblib.dump(self.lsvc, main_path + 'lsvc.pkl') 
+        #joblib.dump(self.sgd, main_path + 'sgd.pkl') 
         
+
     def load_all_clf(self):
+        print('Loading clfs...')
         main_path = 'python/server/ml_models/'
         self.nb = joblib.load(main_path + 'nb.pkl') 
-        #self.svc = joblib.load(main_path + 'svc.pkl') 
+        self.svc = joblib.load(main_path + 'svc.pkl') 
         self.lsvc = joblib.load(main_path + 'lsvc.pkl') 
         self.sgd = joblib.load(main_path + 'sgd.pkl') 
     
+
 if __name__ == '__main__':
     ml = ML()
     #ml.learn()
     #ml.save_all_clf()
-
+    ml.read_datasets()
+    ml.mix_datasets()
     ml.load_all_clf()
+    ml.report(ml.nb, False)
+    ml.report(ml.lsvc, False)
+    ml.report(ml.svc, False)
+    ml.report(ml.sgd, False)
