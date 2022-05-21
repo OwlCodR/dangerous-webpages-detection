@@ -89,9 +89,9 @@ class ML:
 
     def learn_clf(self, vectorizer, classifier, is_make_chart):
         text_clf = Pipeline([
-                     ('countVec', vectorizer),
-                     ('clf', classifier)
-                     ])
+            ('countVec', vectorizer),
+            ('clf', classifier),
+        ])
         print('Start learning...')
         text_clf.fit(self.sentences[:10000], self.labels[:10000])
         print('Finish learning...')

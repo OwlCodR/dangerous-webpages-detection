@@ -27,7 +27,7 @@ suicide_websites_list = [
     'https://pobedish.ru/main/help/postoyanno_dumayu_o_suicide_vozmojno_eto_edinstvennyy_sposob_prekratit_moi_stradaniya..htm',
     'https://pobedish.ru/main/help/moya_jizn_-_polnoe_nichto_i_ya_nenaviju_sebya..htm',
     'https://pobedish.ru/main/help/iz-za_vseh_muk_kotorye_so_mnoy_byli_v_techenii_mnogih_let_ya_hochu_pokonchit_s_soboy_i_polojit_konec_pozoru_i_usherbnosti..htm', 
-    ]
+]
 
 normal_websites_list = [
     'http://nosuicid.ru/',
@@ -56,7 +56,7 @@ normal_websites_list = [
     'https://ru.wikipedia.org/wiki/%D0%A1%D0%BC%D0%B5%D1%80%D1%82%D1%8C_%D1%87%D0%B8%D0%BD%D0%BE%D0%B2%D0%BD%D0%B8%D0%BA%D0%B0',
     'https://pitportal.ru/samples_docs/gigiena_pitaniya/6418.html',
     'https://ru.wikipedia.org/wiki/%D0%90%D1%80%D0%B0%D1%80%D0%B0%D1%82',
-    ]
+]
 
 def get_suicide_contents_soup():
     l = []
