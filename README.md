@@ -1,5 +1,6 @@
-# Suicide Scanner
+# :mag: Suicide Webpages Scanner
 A simple project that will save the world a little :)
+> The goal of this project is to detect and block dangerous websites that contain suicide information.
 
 # Files
 Now there are two folders
