@@ -15,6 +15,6 @@ Now there are two folders
 sequenceDiagram
 Web Page ->> Google Extension: Content data (content text)
 Google Extension ->> Python Server: POST request
-Python Server ->> Google Extension: Answer (Yes/No)
+Python Server ->> Google Extension: Is dangerous? (Yes/No)
 ```
 
